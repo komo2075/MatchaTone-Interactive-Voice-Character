@@ -30,7 +30,7 @@ Custom audio system enables cross-faded background music and embedded sound effe
 
 ### ✧ Live Demo
 👉 **Play the character**  
-https://YOUR-USERNAME.github.io/MatchaTone-Interactive-Character
+https://komo2075.github.io/MatchaTone-Interactive-Voice-Character/
 
 ### ✧ 2-Minute Documentation Video
 👉 https://youtu.be/XXXXXXXX
