@@ -1,7 +1,7 @@
 // ====== Tunables ======
 let SLEEP_AFTER_MS = 10000;
 let SHY_HOLD_MS    = 1200;
-let HAPPY_HOLD_MS  = 1200;
+let HAPPY_HOLD_MS  = 10000;
 
 // 轻音触发倾听的判定时间
 let LISTEN_TRIGGER_MS = 500;   // 持续 0.5 秒轻音就进入倾听
@@ -23,6 +23,15 @@ let started = false;
 let isMuted = false;   // 是否闭麦
 
 let sens = 1.0;
+
+//playtest2, v1.0.4
+// ====== BGM 系统 ======
+let bgm = {};               // 存放各状态的 BGM Audio 对象
+let currentBgmKey = null;   // 当前正在播放的 BGM key（"happy" / "sleep" / null）
+let bgmFadeMs = 800;        // 淡入淡出时间（毫秒），可以自己调
+let bgmFadeRaf = null;      // requestAnimationFrame 句柄
+
+
 
 // Web Audio
 let audioCtx, analyser, mediaStream, sourceNode;
@@ -70,7 +79,9 @@ function setup(){
       v.loop = true;
     }
 
-    v.muted = true;
+    v.muted = false;
+    v.volume = 1.0;
+
     v.playsInline = true;
     v.preload = "auto";
     v.setAttribute("webkit-playsinline","true");
@@ -96,6 +107,20 @@ function setup(){
     stage.appendChild(v);
     videos[name] = v;
   });
+
+  //playtest2 BGM 系统, v1.0.4
+  // ====== 载入 BGM ======
+  const bgmConfig = {
+    happy: "assets/audio/happy_loop.mp3",
+    sleep: "assets/audio/sleep_loop_bgm.mp3"
+  };
+
+  for(const key in bgmConfig){
+    const a = new Audio(bgmConfig[key]);
+    a.loop = true;      // happy 和 sleep_loop 都是循环 BGM
+    a.volume = 0;       // 先静音，等需要时淡入
+    bgm[key] = a;
+  }
 
 
 
@@ -602,7 +627,92 @@ function switchTo(name){
   if(p && p.catch){
     p.catch(()=>{});             // autoplay 被拦截就忽略
   }
+  //playtest2 BGM 系统, v1.0.4 
+  // ★ 在这里同步更新 BGM
+  updateBgmForState(name);
 }
+
+//playtest2 BGM 系统,v1.0.4
+// 根据状态名，决定用哪一首 BGM
+function bgmKeyForState(stateName){
+  // 只有 happy 有 BGM
+  if(stateName === "happy") return "happy";
+
+  // 只有 sleep_loop 有 BGM
+  if(stateName === "sleep_loop") return "sleep";
+
+  // 其他状态都不要 BGM
+  return null;
+}
+
+// 对外接口：状态变化时调用它
+function updateBgmForState(stateName){
+  const key = bgmKeyForState(stateName);  // "happy" / "sleep" / null
+  playBgm(key);
+}
+
+// 交叉淡入淡出 BGM
+// targetKey 可以是 "happy" / "sleep" / null（null 表示淡出到完全无 BGM）
+function playBgm(targetKey){
+  const prevKey   = currentBgmKey;
+  if(targetKey === prevKey){
+    // 目标和当前一样，就不用切
+    return;
+  }
+
+  const prevAudio = prevKey   ? bgm[prevKey]   : null;
+  const nextAudio = targetKey ? bgm[targetKey] : null;
+
+  const fadeDuration = bgmFadeMs;
+  const startTime    = performance.now();
+
+  // 启动新 BGM
+  if(nextAudio){
+    try{ nextAudio.currentTime = 0; }catch(e){}
+    nextAudio.volume = 0;
+    nextAudio.play();
+  }
+
+  // 取消上一次的淡入淡出动画
+  if(bgmFadeRaf){
+    cancelAnimationFrame(bgmFadeRaf);
+    bgmFadeRaf = null;
+  }
+
+  function step(now){
+    const t = Math.min(1, (now - startTime) / fadeDuration);
+
+    // 旧 BGM 音量从 1 → 0
+    if(prevAudio){
+      prevAudio.volume = 1 - t;
+    }
+    // 新 BGM 音量从 0 → 1
+    if(nextAudio){
+      nextAudio.volume = t;
+    }
+
+    if(t < 1){
+      bgmFadeRaf = requestAnimationFrame(step);
+    }else{
+      // 淡入淡出结束
+      if(prevAudio){
+        prevAudio.pause();
+        prevAudio.currentTime = 0;
+      }
+      currentBgmKey = targetKey || null;
+      bgmFadeRaf = null;
+    }
+  }
+
+  // 如果没有任何 BGM（例如从无 BGM 切到无 BGM），直接清理掉
+  if(!prevAudio && !nextAudio){
+    currentBgmKey = null;
+    return;
+  }
+
+  bgmFadeRaf = requestAnimationFrame(step);
+}
+
 
 
 
