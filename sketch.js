@@ -71,12 +71,17 @@ function setup(){
     $("helpBtn").addEventListener("click", openHelp);
     $("helpClose").addEventListener("click", closeHelp);
     $("helpBackdrop").addEventListener("click", closeHelp);
+
+    $("aboutBtn").addEventListener("click", openAbout);
+    $("aboutClose").addEventListener("click", closeAbout);
+    $("aboutBackdrop").addEventListener("click", closeAbout);
   
     // ESC 关闭所有弹窗
     window.addEventListener("keydown", (e)=>{
       if(e.key === "Escape"){
         closeSettings();
         closeHelp();
+        closeAbout();
       }
     });
 
@@ -355,5 +360,15 @@ function openHelp(){
 
 function closeHelp(){
   const el = $("helpOverlay");
+  if(el) el.classList.remove("active");
+}
+
+function openAbout(){
+  const el = $("aboutOverlay");
+  if(el) el.classList.add("active");
+}
+
+function closeAbout(){
+  const el = $("aboutOverlay");
   if(el) el.classList.remove("active");
 }

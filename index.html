@@ -21,6 +21,9 @@
         <button id="helpBtn" class="icon-btn">
           <img src="assets/icon_help.png" alt="Help">
         </button>
+        <button id="aboutBtn" class="icon-btn">
+          <img src="assets/icon_about.png" alt="About">
+        </button>
         <button id="settingsBtn" class="icon-btn">
           <img src="assets/icon_settings.png" alt="Settings">
         </button>
@@ -100,3 +103,19 @@
   <script src="sketch.js"></script>
 </body>
 </html>
+
+    <!-- ========== 关于角色弹窗（aboutOverlay） ========== -->
+    <div id="aboutOverlay" class="overlay">
+      <div class="overlay-backdrop" id="aboutBackdrop"></div>
+      <div class="overlay-card">
+        <button class="close-btn" id="aboutClose">×</button>
+        <h2 class="overlay-title">About MatchaTone</h2>
+        <div id="aboutContent">
+          <p>
+            MatchaTone is a gentle companion that listens, reacts, and rests.
+            It breathes with sound, blushes when surprised, and smiles when touched.
+            A small window into emotion through simple interaction.
+          </p>
+        </div>
+      </div>
+    </div>
