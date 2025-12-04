@@ -3,6 +3,11 @@ let SLEEP_AFTER_MS = 10000;
 let SHY_HOLD_MS    = 1200;
 let HAPPY_HOLD_MS  = 10000;
 
+//final submission addition, v1.0.7
+// 聆听冷却控制
+let lastListeningEndAt = 0;          // 最近一次“结束聆听”的时间
+const LISTEN_COOLDOWN_MS = 30000;    // 聆听结束后 30 秒内不再进入聆听
+
 
 //final submission addition, v1.0.6
 // 防止状态切换过快
@@ -433,9 +438,10 @@ function draw(){
 
   }else if(listeningCandidateSince > 0 &&
            (now - listeningCandidateSince) > LISTEN_TRIGGER_MS &&
-           current === "live"){
+           current === "live" &&
+           (now - lastListeningEndAt) > LISTEN_COOLDOWN_MS ){
     // 轻音持续一小段时间, 从 live 进入倾听
-    requestListeningEnter();
+     requestListeningEnter();
 
   }else if((now - lastInputAt) > SLEEP_AFTER_MS){
     // 很久没有任何声音或互动, 进入入睡动画
@@ -523,12 +529,20 @@ function requestListeningEnter(){
   switchTo("listening_in");
 }
 
+//final submission addition, v1.0.7
+// 倾听退出
 function requestListeningExit(target){
   if(current !== "listening_loop") return;
+
   listeningTarget = target || "live";
   listeningQuietSince = 0;
+
+  // 记录本次聆听结束的时间（用于 cooldown）
+  lastListeningEndAt = millis();
+
   switchTo("listening_out");
 }
+
 
 function onListeningInEnded(){
   if(current === "listening_in"){
