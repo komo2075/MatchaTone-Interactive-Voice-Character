@@ -103,22 +103,6 @@ let stateHoldUntil = 0;   // 当前状态被锁定到的时间点（毫秒，基
 
 
 
-
-function maybeShowPrompt(now){
-  // 只在 live 或 sleep_loop 这种“安静状态”下问
-  if(current !== "live" && current !== "sleep_loop") return;
-
-  if(now - lastPromptAt < PROMPT_INTERVAL_MS) return;
-
-  // 有一段时间比较安静才触发，比如 15 秒没大动静
-  if(now - lastInputAt < 15000) return;
-
-  const msg = PROMPTS[Math.floor(Math.random()*PROMPTS.length)];
-  showSpeechBubble(msg);   // 你可以用一个小 div 在舞台上方显示一条文字
-  lastPromptAt = now;
-}
-
-
 function setup(){
   noCanvas();
 
@@ -402,12 +386,17 @@ function draw(){
 
   // 轻音触发倾听的候选计时, 只在 live 或刚从别的状态回来的时候生效
   if(!isSleepState() && !isListeningState()){
-    if(isSoft){
-      if(listeningCandidateSince === 0){
-        listeningCandidateSince = now;
-      }
-    }else{
+    // 如果处于冷却期，直接清零，不进入候选状态
+    if((now - lastListeningEndAt) <= LISTEN_COOLDOWN_MS){
       listeningCandidateSince = 0;
+    }else{
+      if(isSoft){
+        if(listeningCandidateSince === 0){
+          listeningCandidateSince = now;
+        }
+      }else{
+        listeningCandidateSince = 0;
+      }
     }
   }
 
@@ -475,8 +464,7 @@ function draw(){
 
   }else if(listeningCandidateSince > 0 &&
            (now - listeningCandidateSince) > LISTEN_TRIGGER_MS &&
-           current === "live" &&
-           (now - lastListeningEndAt) > LISTEN_COOLDOWN_MS ){
+           current === "live"){
     // 轻音持续一小段时间, 从 live 进入倾听
      requestListeningEnter();
 
@@ -496,69 +484,47 @@ function draw(){
   maybeShowPrompt(now); // final submission addition，v1.0.6
 }
 
-
-
-//final submission addition, v1.0.8
+// 判断当前是否在睡眠相关状态
 function isSleepState(){
   return current === "sleep_in" ||
          current === "sleep_loop" ||
          current === "sleep_out";
 }
 
+
+//final submission addition, v1.0.9
 function triggerHappy(){
-  // 1. 睡觉相关状态禁止触发 happy
+  // 睡觉相关状态禁止触发 happy
   if(isSleepState()){
     return;
   }
 
-  // 2. 如果当前状态还在锁定时间内，也不打断
+  // 如果当前正在聆听状态，就先请求退出聆听，再去 happy
+  if(isListeningState()){
+    // 只在 listening_loop 阶段才真正退出
+    if(current === "listening_loop"){
+      requestListeningExit("happy");  // 出场完再进 happy
+    }
+    return; // 不直接切 happy
+  }
+
+  // 如果当前状态还在锁定时间内，也不打断
   const now = millis();
   if(stateHoldUntil && now < stateHoldUntil){
     return;
   }
 
-  // 3. 正常 happy 逻辑
-  const now2 = millis();
-  happyUntil = now2 + HAPPY_HOLD_MS;
+  // 正常 happy 逻辑（通常在 live 时）
+  happyUntil = now + HAPPY_HOLD_MS;
   switchTo("happy");
 }
+
 
 
 function isListeningState(){
   return current === "listening_in" ||
          current === "listening_loop" ||
          current === "listening_out";
-}
-
-// 睡眠唤醒的请求, 你之前应该已经有, 这里给一个参考版
-function requestWake(target){
-  if(current !== "sleep_loop") return;
-  wakeTarget = target || "live";
-  switchTo("sleep_out");
-}
-
-function onSleepInEnded(){
-  if(current === "sleep_in"){
-    switchTo("sleep_loop");
-  }
-}
-
-function onSleepOutEnded(){
-  if(current === "sleep_out"){
-    const target = wakeTarget || "live";
-    wakeTarget = null;
-    const now = millis();
-    lastInputAt = now;
-    if(target === "happy"){
-      happyUntil = now + HAPPY_HOLD_MS;
-      switchTo("happy");
-    }else if(target === "shy"){
-      shyUntil = now + SHY_HOLD_MS;
-      switchTo("shy");
-    }else{
-      switchTo("live");
-    }
-  }
 }
 
 // 倾听进出场

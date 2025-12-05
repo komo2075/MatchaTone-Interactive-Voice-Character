@@ -84,43 +84,77 @@
         <h2 class="overlay-title">How to Test</h2>
         <div id="helpContent">
 
-          <p><b>MatchaTone reacts to your sound and touch.</b><br>
-          Here are the ways you can interact with the character:</p>
+          <p><b>MatchaTone is a small desk companion that reacts gently to your sound and touch.</b></p>
 
-          <h4>🎤 Sound</h4>
-
-          <p><b>Soft sound → Listening</b><br>
-          Speak gently, hum, or blow softly.<br>
-          Hold the soft sound for <b>about 0.5 seconds</b> to trigger Listening.</p>
-
-          <p><b>Loud sound → Shy</b><br>
-          Clap, speak loudly, or make a sudden noise.<br>
-          A loud sound triggers the Shy reaction immediately.</p>
-
-          <p><b>Silence → Sleep</b><br>
-          Stay quiet for <b>10 seconds</b>.<br>
-          MatchaTone will enter Sleep, and a small sound or tap will wake it.</p>
-
-          <h4>👆 Touch</h4>
+          <h4>Sound triggers</h4>
           <ul>
-            <li><b>Tap the character</b> → triggers Happy (with music)</li>
+            <li>
+              <b>Soft sound → Listening</b><br>
+              When the character is in the live state, a soft and steady sound above the soft
+              threshold triggers listening.  
+              This happens after the sound stays in the soft range for about <b>0.5 seconds</b>.
+            </li>
+
+            <li>
+              <b>Loud sound → Shy</b><br>
+              A volume above the loud threshold instantly makes the character shy.  
+              Loud sound can also wake the character from sleep.
+            </li>
+
+            <li>
+              <b>Silence → Sleep</b><br>
+              If the character stays in the live state with no meaningful sound for about  
+              <b>80 seconds</b>, it slowly falls asleep.
+            </li>
+
+            <li>
+              <b>Threshold ranges</b><br>
+              Soft sound is between the soft and loud thresholds  
+              (default soft ≈ 0.02, loud ≈ 0.12).  
+              Anything below the soft threshold counts as quiet.
+            </li>
           </ul>
 
-          <h4>⭐ States</h4>
+          <h4>Touch trigger</h4>
           <ul>
-            <li><b>Live</b> – the default idle state</li>
-            <li><b>Listening</b> – triggered by soft, steady sound</li>
-            <li><b>Happy</b> – triggered by tapping, with joyful BGM</li>
-            <li><b>Shy</b> – startled by loud sound</li>
-            <li><b>Sleep</b> – triggered by long silence, with calming sleep BGM</li>
+            <li>
+              <b>Tap → Happy</b><br>
+              Tapping the stage makes the character happy with a short joyful sequence and its
+              own looping music.  
+              This cannot happen during sleep.
+            </li>
           </ul>
 
-          <h4>💡 Tips</h4>
+          <h4>State timing</h4>
           <ul>
-            <li>Hold your soft sound steadily to enter Listening.</li>
-            <li>Loud noises will interrupt Listening.</li>
-            <li>Heavy background noise may affect detection.</li>
-            <li>The character feels more alive when you mix sound, silence, and touch.</li>
+            <li><b>Happy</b> plays for about <b>10 seconds</b> before another interaction can happen.</li>
+            <li><b>Shy</b> lasts for about <b>2 seconds</b>.</li>
+            <li><b>Listening In / Out</b> each take about <b>1.2 seconds</b>.</li>
+            <li><b>Listening Loop</b> lasts at least <b>10 seconds</b> before exiting.</li>
+            <li><b>Listening Cooldown</b>: after finishing listening, the character will not listen again for about <b>60 seconds</b>.</li>
+            <li><b>Sleep Loop</b> stays for at least <b>60 seconds</b> unless a loud sound wakes it.</li>
+          </ul>
+
+          <h4>State overview</h4>
+          <ul>
+            <li><b>Live</b> calm idle state, used as the base for all interactions.</li>
+            <li><b>Listening</b> triggered by steady soft sound when calm enough. The character moves closer and listens.</li>
+            <li><b>Happy</b> triggered by tapping the stage, plays a joyful animation with BGM.</li>
+            <li><b>Shy</b> triggered by loud sound, a fast startled reaction.</li>
+            <li><b>Sleep</b> triggered only after long quiet time in live, with its own sleep BGM.</li>
+          </ul>
+
+          <h4>Prompt bar</h4>
+          <p>
+            In the live state, the character sometimes shows a small message inviting you to talk.  
+            Prompts appear only after the character has been calm for a while and never appear during sleep.
+          </p>
+
+          <h4>Tips</h4>
+          <ul>
+            <li>You can adjust sensitivity and thresholds in the Settings panel.</li>
+            <li>You may mute or unmute the microphone with the button or the M key.</li>
+            <li>Headphones and a quiet room give the most stable reactions.</li>
           </ul>
 
         </div>
