@@ -1,42 +1,50 @@
 # MatchaTone — An Interactive Voice-Responsive Companion
 
-MatchaTone is a soft and emotive character that reacts to sound and touch.  
-Designed as a calming companion, it listens closely when you whisper, becomes shy when surprised, and gently falls asleep when the world grows quiet. MatchaTone blends character animation, ambient audio, and microphone-based interaction into a small emotional experience.
+MatchaTone is a gentle desk companion that reacts to sound and touch.  
+It listens when you speak softly, becomes shy when surprised, and slowly falls asleep when the room grows quiet. Through subtle animation and audio-based interaction, MatchaTone creates a small emotional presence on your screen.
 
-### ✧ Core Idea
-MatchaTone explores how digital characters can feel alive through subtle behaviors.  
-Instead of buttons, menus, or commands, the character is shaped by natural input — your voice, your presence, and your touch.
+## ✧ Core Idea
+MatchaTone explores how digital characters can feel alive without complex controls.  
+Instead of buttons or commands, the character responds to natural input — the user’s voice, silence, and simple taps.  
+The goal is to build a calm, responsive companion that feels attentive and expressive.
 
-### ✧ Interaction
-**Sound Input**
-- Soft sound → MatchaTone leans in to listen  
-- Loud sound → MatchaTone becomes shy  
-- Silence (10s) → MatchaTone falls asleep  
-- Normal sound → Remains awake in the Live state  
+## ✧ Interaction
 
-**Touch Input**
-- Tap → MatchaTone responds with a joyful Happy animation  
+### Sound Input
+- **Soft sound** → MatchaTone leans forward and enters Listening  
+- **Loud sound** → MatchaTone becomes Shy  
+- **Quiet for a long time** → MatchaTone slowly falls asleep  
+- **Normal ambient sound** → Character remains in the Live state
 
-### ✧ Behaviors
-- **Live** — normal idle with subtle motion  
+### Touch Input
+- **Tap** → Triggers the Happy animation with joyful looping music  
+- **Tap during Listening** → Character gently exits Listening before turning Happy
+
+## ✧ Behaviors
+- **Live** — calm idle motion  
 - **Listening** — approaches and listens closely  
-- **Happy** — reacts with joy and plays a soft looping melody  
+- **Happy** — joyful reaction with its own BGM  
 - **Shy** — startled by loud sound  
-- **Sleep** — falls asleep after long quiet, with its own sleep BGM  
+- **Sleep** — relaxes fully after long quiet, with soft sleep music
 
-### ✧ Technology
-Built with HTML, CSS, and JavaScript using video-driven animations and microphone analysis.  
-Custom audio system enables cross-faded background music and embedded sound effects.
+Each behavior has its own animation loop, minimum hold time, and smooth transitions to maintain a natural emotional rhythm.
 
-### ✧ Live Demo
-👉 **Play the character**  
-https://komo2075.github.io/MatchaTone-Interactive-Voice-Character/
+## ✧ Technology
+MatchaTone is built with:
 
-### ✧ 2-Minute Documentation Video
-👉 https://youtu.be/XXXXXXXX
+- HTML, CSS, JavaScript  
+- Web Audio API for real-time microphone input  
+- Video-driven character animation  
+- Custom crossfade BGM system  
+- A state machine for stable transitions and cooldowns
 
-### ✧ Author
+The character runs directly in modern browsers with microphone access enabled.
+
+## ✧ Live Demo
+👉 https://komo2075.github.io/MatchaTone-Interactive-Voice-Character/
+
+## ✧ Documentation Video (2 minutes)
+👉 https://youtu.be/GV7Kw4ucfaw?si=Kid2S7aKgKRxuD5q
+
+## ✧ Author
 Created by **Komo Hu**
-
----
-
