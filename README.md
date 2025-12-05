@@ -1,4 +1,4 @@
-# MatchaTone — An Interactive Voice-Responsive Companion
+# MatchaTone — An Interactive Voice-Character
 
 MatchaTone is a gentle desk companion that reacts to sound and touch.  
 It listens when you speak softly, becomes shy when surprised, and slowly falls asleep when the room grows quiet. Through subtle animation and audio-based interaction, MatchaTone creates a small emotional presence on your screen.
